@@ -1,5 +1,9 @@
 # CalendarSync
 
+<p align="center">
+  <img src="assets/logo.svg" width="128" height="128" alt="CalendarSync logo"/>
+</p>
+
 A .NET CLI tool for consultants and anyone juggling multiple calendar identities. Run it each week to get an overview of your events across all calendars, then select which ones to block off as placeholders in your other calendars.
 
 ## Features
@@ -131,3 +135,8 @@ Config is stored at `~/.calendarsync/config.json` (mode `600` on Unix). Token ca
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Legal
+
+- [Privacy Policy](PRIVACY.md)
+- [Terms of Service](TERMS.md)

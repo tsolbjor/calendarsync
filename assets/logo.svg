@@ -1,0 +1,57 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="90" fill="url(#bg)"/>
+
+  <!-- Back calendar (offset and rotated for depth) -->
+  <g transform="rotate(-8, 256, 256)">
+    <rect x="80" y="120" width="230" height="275" rx="20" fill="white" opacity="0.18"/>
+    <rect x="80" y="120" width="230" height="68"  rx="20" fill="white" opacity="0.25"/>
+    <rect x="80" y="168" width="230" height="20"        fill="white" opacity="0.25"/>
+  </g>
+
+  <!-- Front calendar body -->
+  <rect x="146" y="140" width="240" height="290" rx="22" fill="white"/>
+
+  <!-- Front calendar header -->
+  <rect x="146" y="140" width="240" height="76" rx="22" fill="#1d4ed8"/>
+  <rect x="146" y="186" width="240" height="30"        fill="#1d4ed8"/>
+
+  <!-- Binding rings -->
+  <rect x="194" y="126" width="22" height="36" rx="11" fill="#93c5fd"/>
+  <rect x="316" y="126" width="22" height="36" rx="11" fill="#93c5fd"/>
+
+  <!-- Day grid: 3 cols x 3 rows -->
+  <rect x="172" y="248" width="44" height="34" rx="8" fill="#dbeafe"/>
+  <rect x="232" y="248" width="44" height="34" rx="8" fill="#dbeafe"/>
+  <rect x="292" y="248" width="44" height="34" rx="8" fill="#dbeafe"/>
+
+  <rect x="172" y="298" width="44" height="34" rx="8" fill="#dbeafe"/>
+  <rect x="232" y="298" width="44" height="34" rx="8" fill="#1d4ed8"/>
+  <rect x="292" y="298" width="44" height="34" rx="8" fill="#dbeafe"/>
+
+  <rect x="172" y="348" width="44" height="34" rx="8" fill="#dbeafe"/>
+  <rect x="232" y="348" width="44" height="34" rx="8" fill="#dbeafe"/>
+  <rect x="292" y="348" width="44" height="34" rx="8" fill="#dbeafe"/>
+
+  <!-- Sync badge -->
+  <circle cx="384" cy="384" r="74" fill="#1e3a8a"/>
+  <circle cx="384" cy="384" r="64" fill="#2563eb"/>
+
+  <!--
+    Sync icon — Material Design "sync" (Apache 2.0), original 24×24 viewBox.
+    Scaled 5× and translated so icon center (12,12) lands at badge center (384,384).
+  -->
+  <g transform="translate(324,324) scale(5)" fill="white">
+    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7
+             2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0
+             14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46
+             8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+  </g>
+</svg>

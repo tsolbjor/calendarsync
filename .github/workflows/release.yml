@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # needed to create GitHub Releases
+
+jobs:
+  release:
+    name: Build and release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release artifacts
+        shell: pwsh
+        run: ./build.ps1 -Version "${{ steps.version.outputs.VERSION }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "CalendarSync v${{ steps.version.outputs.VERSION }}"
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          fail_on_unmatched_files: true
+          files: |
+            dist/*.zip
+            dist/*.tar.gz
+            dist/checksums.txt
+          body: |
+            ## Installation
+
+            Download the archive for your platform, extract, and add the binary to your PATH.
+
+            | Platform        | Download |
+            |-----------------|----------|
+            | Windows x64     | `CalendarSync-${{ steps.version.outputs.VERSION }}-win-x64.zip` |
+            | Windows arm64   | `CalendarSync-${{ steps.version.outputs.VERSION }}-win-arm64.zip` |
+            | Linux x64       | `CalendarSync-${{ steps.version.outputs.VERSION }}-linux-x64.tar.gz` |
+            | macOS x64       | `CalendarSync-${{ steps.version.outputs.VERSION }}-osx-x64.tar.gz` |
+            | macOS arm64     | `CalendarSync-${{ steps.version.outputs.VERSION }}-osx-arm64.tar.gz` |
+
+            Verify file integrity with `checksums.txt` (SHA-256).
+
+            ## WinGet
+
+            ```
+            winget install tsolbjor.CalendarSync
+            ```
+
+      - name: Upload WinGet manifests as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: winget-manifests-${{ steps.version.outputs.VERSION }}
+          path: dist/winget/
+          retention-days: 90

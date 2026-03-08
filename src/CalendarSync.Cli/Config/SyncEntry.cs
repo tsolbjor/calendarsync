@@ -13,4 +13,11 @@ public class SyncEntry
     public required string TargetAccountId { get; set; }
     public required string TargetCalendarId { get; set; }
     public required string TargetEventId { get; set; }
+
+    /// <summary>Start time of the source event at the time it was last synced.</summary>
+    public DateTimeOffset? SyncedStart { get; set; }
+    /// <summary>End time of the source event at the time it was last synced.</summary>
+    public DateTimeOffset? SyncedEnd { get; set; }
+    /// <summary>Whether the source event was all-day at the time it was last synced.</summary>
+    public bool? SyncedIsAllDay { get; set; }
 }

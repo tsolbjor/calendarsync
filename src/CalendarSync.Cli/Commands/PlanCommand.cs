@@ -141,10 +141,19 @@ public static class PlanCommand
 
         // Find sync entries relevant to this target calendar
         var sourceEventIds = sourceEvents.Select(e => e.Event.Id).ToHashSet();
-        var existingEntries = config.SyncedEvents
+        var allEntriesForTarget = config.SyncedEvents
             .Where(e => e.TargetAccountId == targetAccount.Id
-                     && e.TargetCalendarId == targetCalendar.Id
-                     && sourceEventIds.Contains(e.SourceEventId))
+                     && e.TargetCalendarId == targetCalendar.Id)
+            .ToList();
+
+        // Entries whose source event no longer exists (deleted) — auto-delete, no prompt needed
+        var orphanedEntries = allEntriesForTarget
+            .Where(e => !sourceEventIds.Contains(e.SourceEventId))
+            .ToList();
+
+        // Entries whose source event still exists — shown in the prompt
+        var existingEntries = allEntriesForTarget
+            .Where(e => sourceEventIds.Contains(e.SourceEventId))
             .ToDictionary(e => e.SourceEventId);
 
         // Self-heal: also scan placeholder events already in the target calendar.
@@ -176,7 +185,37 @@ public static class PlanCommand
         AnsiConsole.WriteLine();
         AnsiConsole.Write(new Rule($"Target: [bold]{targetCalendar.Name}[/] [grey]({targetAccount.DisplayName ?? targetAccount.Id})[/]").LeftJustified());
 
-        var selected = PromptEventSelection(sourceEvents, existingEntries);
+        // Build orphaned-entry notice to embed in the prompt's instructions footer
+        string? orphanedNotice = null;
+        if (orphanedEntries.Count > 0)
+        {
+            var placeholderMap = allEvents
+                .Where(e => e.Account.Id == targetAccount.Id && e.Calendar.Id == targetCalendar.Id)
+                .ToDictionary(e => e.Event.Id);
+
+            var lines = new System.Text.StringBuilder();
+            lines.AppendLine();
+            lines.AppendLine($"[bold red]⚠ {orphanedEntries.Count} placeholder(s) will be removed — source event no longer exists:[/]");
+            foreach (var entry in orphanedEntries)
+            {
+                if (placeholderMap.TryGetValue(entry.TargetEventId, out var placeholder))
+                {
+                    var evt = placeholder.Event;
+                    var time = evt.IsAllDay
+                        ? $"{evt.Start:ddd d} all-day"
+                        : $"{evt.Start:ddd d} {evt.Start:HH:mm}–{evt.End:HH:mm}";
+                    lines.AppendLine($"  [red]·[/] [silver]{time}  {Markup.Escape(evt.Subject)}[/]");
+                }
+                else
+                {
+                    lines.AppendLine($"  [red]·[/] [silver](event id: {entry.TargetEventId})[/]");
+                }
+            }
+            lines.AppendLine();
+            orphanedNotice = lines.ToString().TrimEnd();
+        }
+
+        var selected = PromptEventSelection(sourceEvents, existingEntries, orphanedNotice);
 
         // Compute diff
         var selectedIds = selected.Select(e => e.Event.Id).ToHashSet();
@@ -184,6 +223,7 @@ public static class PlanCommand
         var toUpdate = selected.Where(e => existingEntries.ContainsKey(e.Event.Id)).ToList();
         var toDelete = existingEntries.Values
             .Where(e => !selectedIds.Contains(e.SourceEventId))
+            .Concat(orphanedEntries)  // placeholders whose source event was deleted
             .ToList();
 
         if (toCreate.Count == 0 && toUpdate.Count == 0 && toDelete.Count == 0)
@@ -214,18 +254,27 @@ public static class PlanCommand
 
     private static List<SourceEvent> PromptEventSelection(
         List<SourceEvent> sourceEvents,
-        Dictionary<string, SyncEntry> existingEntries)
+        Dictionary<string, SyncEntry> existingEntries,
+        string? instructionsFooter = null)
     {
         // Use event IDs as prompt items; look up SourceEvent via dictionary
         var eventMap = sourceEvents.ToDictionary(e => e.Event.Id);
 
+        var instructionsText = instructionsFooter is not null
+            ? $"{instructionsFooter}\n[grey](Press [blue]<space>[/] to select, [green]<enter>[/] to accept)[/]"
+            : "[grey](Press [blue]<space>[/] to select, [green]<enter>[/] to accept)[/]";
+
         var prompt = new MultiSelectionPrompt<string>()
             .Title("Select events to block off (space to toggle, enter to confirm):")
-            .UseConverter(id => eventMap.TryGetValue(id, out var src)
-                ? FormatEventLabel(src, existingEntries.ContainsKey(id))
-                : id)
+            .UseConverter(id =>
+            {
+                if (!eventMap.TryGetValue(id, out var src)) return id;
+                existingEntries.TryGetValue(id, out var entry);
+                return FormatEventLabel(src, entry);
+            })
             .PageSize(20)
-            .NotRequired();
+            .NotRequired()
+            .InstructionsText(instructionsText);
 
         foreach (var dayGroup in sourceEvents.GroupBy(e => e.Event.Start.Date).OrderBy(g => g.Key))
         {
@@ -257,7 +306,7 @@ public static class PlanCommand
     private static bool IsSyncPlaceholder(SourceEvent src) =>
         src.Event.BodyPreview?.Contains(SyncMarkerPrefix, StringComparison.Ordinal) == true;
 
-    private static string FormatEventLabel(SourceEvent src, bool isSynced)
+    private static string FormatEventLabel(SourceEvent src, SyncEntry? syncEntry)
     {
         var time = src.Event.IsAllDay
             ? "all-day "
@@ -267,9 +316,35 @@ public static class PlanCommand
         var calendar = Markup.Escape(src.Calendar.Name);
         var subject = Markup.Escape(src.Event.Subject);
         var prefix = $"[steelblue1][[{account}:{calendar}]][/]";
-        var synced = isSynced ? " [grey](synced)[/]" : "";
 
-        return $"{time}  {prefix}  [white]{subject}[/]{synced}";
+        var suffix = "";
+        if (syncEntry is not null)
+        {
+            // Check whether the event time has changed since last sync
+            var timeChanged = syncEntry.SyncedStart is not null && (
+                syncEntry.SyncedStart != src.Event.Start ||
+                syncEntry.SyncedEnd   != src.Event.End   ||
+                syncEntry.SyncedIsAllDay != src.Event.IsAllDay);
+
+            if (timeChanged)
+            {
+                var dateChanged = syncEntry.SyncedStart!.Value.Date != src.Event.Start.Date;
+                var oldTime = (syncEntry.SyncedIsAllDay ?? false)
+                    ? dateChanged
+                        ? $"{syncEntry.SyncedStart:ddd d} all-day"
+                        : "all-day"
+                    : dateChanged
+                        ? $"{syncEntry.SyncedStart:ddd d} {syncEntry.SyncedStart:HH:mm}–{syncEntry.SyncedEnd:HH:mm}"
+                        : $"{syncEntry.SyncedStart:HH:mm}–{syncEntry.SyncedEnd:HH:mm}";
+                suffix = $" [grey](synced)[/] [yellow](was {oldTime})[/]";
+            }
+            else
+            {
+                suffix = " [grey](synced)[/]";
+            }
+        }
+
+        return $"{time}  {prefix}  [white]{subject}[/]{suffix}";
     }
 
     // ── Create / Update / Delete ──────────────────────────────────────────────
@@ -294,12 +369,15 @@ public static class PlanCommand
 
         config.SyncedEvents.Add(new SyncEntry
         {
-            SourceAccountId = src.Account.Id,
+            SourceAccountId  = src.Account.Id,
             SourceCalendarId = src.Calendar.Id,
-            SourceEventId = src.Event.Id,
-            TargetAccountId = targetAccount.Id,
+            SourceEventId    = src.Event.Id,
+            TargetAccountId  = targetAccount.Id,
             TargetCalendarId = targetCalendar.Id,
-            TargetEventId = targetEventId
+            TargetEventId    = targetEventId,
+            SyncedStart      = src.Event.Start,
+            SyncedEnd        = src.Event.End,
+            SyncedIsAllDay   = src.Event.IsAllDay
         });
     }
 
@@ -319,6 +397,9 @@ public static class PlanCommand
             Body: body);
 
         await provider.UpdateEventAsync(targetAccount, entry.TargetCalendarId, entry.TargetEventId, updatedEvt, ct);
+        entry.SyncedStart    = src.Event.Start;
+        entry.SyncedEnd      = src.Event.End;
+        entry.SyncedIsAllDay = src.Event.IsAllDay;
     }
 
     private static async Task DeletePlaceholderAsync(
@@ -328,9 +409,21 @@ public static class PlanCommand
         SyncEntry entry,
         CancellationToken ct)
     {
-        await provider.DeleteEventAsync(targetAccount, entry.TargetCalendarId, entry.TargetEventId, ct);
+        try
+        {
+            await provider.DeleteEventAsync(targetAccount, entry.TargetCalendarId, entry.TargetEventId, ct);
+        }
+        catch (Exception ex) when (IsNotFound(ex))
+        {
+            // Already deleted externally — just clean up the sync entry
+        }
         config.SyncedEvents.Remove(entry);
     }
+
+    private static bool IsNotFound(Exception ex) =>
+        ex.Message.Contains("not found", StringComparison.OrdinalIgnoreCase) ||
+        ex.Message.Contains("404", StringComparison.Ordinal) ||
+        ex.GetType().Name.Contains("NotFound", StringComparison.OrdinalIgnoreCase);
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 

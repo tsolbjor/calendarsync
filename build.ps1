@@ -17,14 +17,20 @@
 .PARAMETER OutputDir
     Output directory for all artifacts. Defaults to "./dist".
 
+.PARAMETER Local
+    Use file:/// URIs in the WinGet installer manifest instead of GitHub release URLs.
+    Useful for local manifest validation with winget validate.
+
 .EXAMPLE
     ./build.ps1
     ./build.ps1 -Version "1.2.0"
+    ./build.ps1 -Local
     ./build.ps1 -Version "1.2.0" -OutputDir "/tmp/calsync-release"
 #>
 param(
     [string] $Version   = "0.0.0-local",
-    [string] $OutputDir = "./dist"
+    [string] $OutputDir = "./dist",
+    [switch] $Local
 )
 
 $ErrorActionPreference = "Stop"
@@ -128,8 +134,16 @@ New-Item -ItemType Directory -Path $wingetDir | Out-Null
 $winX64   = $Artifacts["$AppName-$Version-win-x64"]
 $winArm64 = $Artifacts["$AppName-$Version-win-arm64"]
 
-$winX64Url   = "$RepoUrl/releases/download/v$Version/$AppName-$Version-win-x64.zip"
-$winArm64Url = "$RepoUrl/releases/download/v$Version/$AppName-$Version-win-arm64.zip"
+if ($Local) {
+    # winget uses WinHTTP and cannot download from UNC/file paths.
+    # Serve dist/ over localhost so winget can reach the zips from Windows.
+    $LocalPort   = 18080
+    $winX64Url   = "http://localhost:$LocalPort/$AppName-$Version-win-x64.zip"
+    $winArm64Url = "http://localhost:$LocalPort/$AppName-$Version-win-arm64.zip"
+} else {
+    $winX64Url   = "$RepoUrl/releases/download/v$Version/$AppName-$Version-win-x64.zip"
+    $winArm64Url = "$RepoUrl/releases/download/v$Version/$AppName-$Version-win-arm64.zip"
+}
 
 # Version manifest
 @"
@@ -145,7 +159,11 @@ ManifestVersion: 1.6.0
 PackageIdentifier: tsolbjor.CalendarSync
 PackageVersion: $Version
 InstallerLocale: en-US
-InstallerType: portable
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+- RelativeFilePath: CalendarSync.exe
+  PortableCommandAlias: CalendarSync
 Commands:
 - CalendarSync
 InstallModes:
@@ -199,7 +217,21 @@ Write-Detail "→ tsolbjor.CalendarSync.locale.en-US.yaml"
 # ── Summary ───────────────────────────────────────────────────────────────────
 
 Write-Host "`n✔ Done — artifacts in $OutputDir" -ForegroundColor Green
-Write-Host @"
+
+if ($Local) {
+    Write-Host @"
+
+  Local manifest uses http://localhost:$LocalPort/ URLs.
+  Before running winget, serve the dist folder from a separate terminal:
+
+    cd $((Resolve-Path $OutputDir).Path) && python3 -m http.server $LocalPort
+
+  Then install with:
+    winget install --manifest $wingetDir
+
+"@ -ForegroundColor DarkGray
+} else {
+    Write-Host @"
 
   To publish a GitHub Release, push a tag:
     git tag v$Version && git push origin v$Version
@@ -208,3 +240,4 @@ Write-Host @"
   with the files from: $wingetDir
 
 "@ -ForegroundColor DarkGray
+}

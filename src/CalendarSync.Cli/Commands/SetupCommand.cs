@@ -152,6 +152,7 @@ public static class SetupCommand
 
         var prompt = new MultiSelectionPrompt<CalendarInfo>()
             .Title("Select calendars to include in planning:")
+            .NotRequired()
             .UseConverter(c => c.Name)
             .AddChoices(calendars);
 

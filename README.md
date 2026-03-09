@@ -35,9 +35,16 @@ dotnet run --project src/CalendarSync.Cli -- <command>
 
 Or publish a self-contained binary:
 
+**Linux / macOS**
 ```bash
 dotnet publish src/CalendarSync.Cli -c Release -r linux-x64 --self-contained -o ./publish
 ./publish/CalendarSync <command>
+```
+
+**Windows (PowerShell)**
+```powershell
+dotnet publish src/CalendarSync.Cli -c Release -r win-x64 --self-contained -o ./publish
+./publish/CalendarSync.exe <command>
 ```
 
 ## Quick start

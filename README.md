@@ -8,7 +8,7 @@ A .NET CLI tool for consultants and anyone juggling multiple calendar identities
 
 ## Features
 
-- **Multi-provider** — Microsoft 365 / Entra, Google Workspace, personal Google (Gmail), and read-only ICS feeds
+- **Multi-provider** — Microsoft 365 / Entra, personal Microsoft (Outlook.com / Hotmail / Live.com), Google Workspace, personal Google (Gmail), and read-only ICS feeds
 - **Interactive planning** — pick exactly which events to block off, per target calendar
 - **Smart re-runs** — on subsequent runs, previously synced events are pre-selected and updated (or removed) as needed
 - **Native calendar integration** — placeholders get an Outlook category (`CalSync`) and a Google Calendar colour (Blueberry) so they're easy to spot
@@ -51,7 +51,8 @@ dotnet publish src/CalendarSync.Cli -c Release -r win-x64 --self-contained -o ./
 
 ```bash
 # 1. Add your accounts
-calendarsync account add microsoft  --id work-ms   --tenant-id <tenant> --client-id <client> --device-code
+calendarsync account add microsoft  --id personal-ms                                          # personal Microsoft account
+calendarsync account add microsoft  --id work-ms   --tenant-id <tenant> --client-id <client>  # work / Entra account
 calendarsync account add google-personal --id personal
 calendarsync account add readonly   --id holidays  --url https://calendar.google.com/calendar/ical/.../basic.ics
 
@@ -69,7 +70,7 @@ calendarsync plan --start 2026-03-10 --end 2026-03-17
 
 | Command | Description |
 |---|---|
-| `account add microsoft` | Add a Microsoft Entra / Microsoft 365 account |
+| `account add microsoft` | Add a Microsoft account (personal Outlook.com / Hotmail, or work Entra / Microsoft 365) |
 | `account add google` | Add a Google Workspace account (bring your own OAuth credentials) |
 | `account add google-personal` | Add a personal Gmail account (credentials bundled) |
 | `account add readonly` | Add a read-only ICS feed (source only) |
@@ -83,7 +84,17 @@ calendarsync plan --start 2026-03-10 --end 2026-03-17
 
 ## Setting up OAuth credentials
 
-### Microsoft (Entra)
+### Microsoft
+
+#### Personal Microsoft accounts (Outlook.com, Hotmail, Live.com)
+
+No app registration needed — the app ships with a built-in OAuth client that supports personal Microsoft accounts.
+
+```bash
+calendarsync account add microsoft --id personal-ms
+```
+
+#### Work / Microsoft 365 accounts (Entra)
 
 1. Register an app in [Azure Portal](https://portal.azure.com) → App registrations
 2. Add a **Mobile and desktop application** redirect URI: `http://localhost`

@@ -150,6 +150,11 @@ Config is stored at `~/.calendarsync/config.json` (mode `600` on Unix). Token ca
 - **Microsoft**: use `--device-code` when adding the account. The device code prompt gives you a URL to open in your Windows browser.
 - **Google**: the OAuth flow prints a URL to the terminal and listens on `localhost` for the callback. Open the URL in your Windows browser — WSL2 forwards localhost ports automatically.
 
+## Screenshots
+
+See [docs/screenshots.md](docs/screenshots.md) for a step-by-step walkthrough with sample
+terminal output covering account setup, login, calendar selection, validation, and planning.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

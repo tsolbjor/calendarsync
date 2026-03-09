@@ -21,31 +21,46 @@ public class MicrosoftCalendarProvider : ICalendarProvider
 
         try
         {
-            await app.AcquireTokenSilent(Scopes, accounts.FirstOrDefault()).ExecuteAsync(ct);
+            var silent = await app.AcquireTokenSilent(Scopes, accounts.FirstOrDefault()).ExecuteAsync(ct);
+            StoreHomeTenantIfNeeded(account, silent);
             return;
         }
         catch (MsalUiRequiredException) { }
 
+        AuthenticationResult result;
         if (account.UseDeviceCode)
         {
-            await AcquireViaDeviceCodeAsync(app, Scopes, ct);
-            return;
+            result = await AcquireViaDeviceCodeAsync(app, Scopes, ct);
+        }
+        else
+        {
+            // Primary: interactive browser / PKCE — no client secret required
+            try
+            {
+                result = await app.AcquireTokenInteractive(Scopes)
+                    .WithUseEmbeddedWebView(false)
+                    .ExecuteAsync(ct);
+            }
+            catch (MsalClientException ex) when (ex.ErrorCode is "authentication_ui_failed" or "browser_not_supported")
+            {
+                Console.WriteLine("[No browser available, falling back to device code flow]");
+                result = await AcquireViaDeviceCodeAsync(app, Scopes, ct);
+            }
         }
 
-        // Primary: interactive browser / PKCE — no client secret required
-        try
-        {
-            await app.AcquireTokenInteractive(Scopes)
-                .WithUseEmbeddedWebView(false)
-                .ExecuteAsync(ct);
-            return;
-        }
-        catch (MsalClientException ex) when (ex.ErrorCode is "authentication_ui_failed" or "browser_not_supported")
-        {
-            Console.WriteLine("[No browser available, falling back to device code flow]");
-        }
+        StoreHomeTenantIfNeeded(account, result);
+    }
 
-        await AcquireViaDeviceCodeAsync(app, Scopes, ct);
+    private static void StoreHomeTenantIfNeeded(AccountConfig account, AuthenticationResult result)
+    {
+        if (account.TenantId is not null) return;
+        var homeTenant = result.Account?.HomeAccountId.TenantId;
+        if (homeTenant is null) return;
+
+        account.TenantId = homeTenant;
+        var config = ConfigManager.Load();
+        var stored = config.Accounts.FirstOrDefault(a => a.Id == account.Id);
+        if (stored is not null) { stored.TenantId = homeTenant; ConfigManager.Save(config); }
     }
 
     public async Task LogoutAsync(AccountConfig account, CancellationToken ct = default)
@@ -151,9 +166,9 @@ public class MicrosoftCalendarProvider : ICalendarProvider
         return new GraphServiceClient(new TokenCredentialAdapter(provider), Scopes);
     }
 
-    private static async Task AcquireViaDeviceCodeAsync(IPublicClientApplication app, string[] scopes, CancellationToken ct)
+    private static async Task<AuthenticationResult> AcquireViaDeviceCodeAsync(IPublicClientApplication app, string[] scopes, CancellationToken ct)
     {
-        await app.AcquireTokenWithDeviceCode(scopes, deviceCodeResult =>
+        return await app.AcquireTokenWithDeviceCode(scopes, deviceCodeResult =>
         {
             Console.WriteLine();
             Console.WriteLine(deviceCodeResult.Message);
@@ -167,21 +182,34 @@ public class MicrosoftCalendarProvider : ICalendarProvider
         if (_apps.TryGetValue(account.Id, out var existing))
             return existing;
 
-        var app = PublicClientApplicationBuilder
+        var builder = PublicClientApplicationBuilder
             .Create(account.ClientId)
-            .WithAuthority(AzureCloudInstance.AzurePublic, account.TenantId)
-            .WithRedirectUri("http://localhost")
-            .Build();
+            .WithRedirectUri("http://localhost");
 
-        RegisterFileCache(app, account.TenantId!);
+        if (account.TenantId is not null)
+            builder = builder.WithAuthority(AzureCloudInstance.AzurePublic, account.TenantId);
+        else
+            builder = builder.WithAuthority(AadAuthorityAudience.AzureAdAndPersonalMicrosoftAccount);
+
+        var app = builder.Build();
+
+        RegisterFileCache(app, account);
         _apps[account.Id] = app;
         return app;
     }
 
-    private static void RegisterFileCache(IPublicClientApplication app, string tenantId)
+    private static void RegisterFileCache(IPublicClientApplication app, AccountConfig account)
     {
         var cacheDir = Config.ConfigManager.TokenCacheDir;
-        var cachePath = Path.Combine(cacheDir, $"msal_{tenantId}.cache");
+        var cachePath = Path.Combine(cacheDir, $"msal_{account.Id}.cache");
+
+        // Migrate from old tenant-based cache name — avoids forcing re-login after upgrade
+        if (!File.Exists(cachePath) && account.TenantId is not null)
+        {
+            var oldPath = Path.Combine(cacheDir, $"msal_{account.TenantId}.cache");
+            if (File.Exists(oldPath))
+                File.Copy(oldPath, cachePath);
+        }
 
         app.UserTokenCache.SetBeforeAccess(args =>
         {

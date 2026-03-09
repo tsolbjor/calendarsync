@@ -21,8 +21,8 @@ public static class AccountAddCommands
     private static Command BuildMicrosoftCommand()
     {
         var idOpt = new Option<string>("--id") { Required = true, Description = "Friendly name (e.g. 'work-ms')" };
-        var tenantIdOpt = new Option<string>("--tenant-id") { Required = true, Description = "Entra tenant ID or domain" };
-        var clientIdOpt = new Option<string>("--client-id") { Required = true, Description = "App registration client ID" };
+        var tenantIdOpt = new Option<string?>("--tenant-id") { Description = "Entra tenant ID or domain. Omit for multi-tenant (any organisation) app registrations." };
+        var clientIdOpt = new Option<string?>("--client-id") { Description = "App registration client ID. Omit to use the built-in multi-tenant app." };
         var displayNameOpt = new Option<string?>("--display-name") { Description = "Optional display name" };
         var deviceCodeOpt = new Option<bool>("--device-code")
         {
@@ -55,7 +55,7 @@ public static class AccountAddCommands
                 Provider = CalendarProvider.Microsoft,
                 DisplayName = parseResult.GetValue(displayNameOpt),
                 TenantId = parseResult.GetValue(tenantIdOpt),
-                ClientId = parseResult.GetValue(clientIdOpt),
+                ClientId = parseResult.GetValue(clientIdOpt) ?? "cef0f602-ecd5-49d1-a2f9-f905ce85cc5a",
                 UseDeviceCode = useDeviceCode
             });
 

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="408" viewBox="0 0 720 408">
+  <rect width="720" height="408" rx="8" fill="#0d1117"/>
+  <circle cx="18" cy="15" r="5" fill="#ff5f57"/>
+  <circle cx="34" cy="15" r="5" fill="#febc2e"/>
+  <circle cx="50" cy="15" r="5" fill="#28c840"/>
+  <text x="360" y="19" text-anchor="middle" fill="#8b949e" font-size="11" font-family='Cascadia Code, Consolas, Menlo, monospace'>CalendarSync — setup</text>
+  <line x1="0" y1="30" x2="720" y2="30" stroke="#30363d" stroke-width="1"/>
+  <text x="20" y="61" fill="#3fb950" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>$ </text>
+  <text x="34" y="61" fill="#ffffff" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>calendarsync setup</text>
+  <text x="20" y="99" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>─── personal (GooglePersonal) ────────────────────────────────────────</text>
+  <text x="20" y="118" fill="#3fb950" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Authenticated</text>
+  <text x="20" y="137" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Select calendars to include in planning:</text>
+  <text x="20" y="175" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  </text>
+  <text x="34" y="175" fill="#3fb950" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>[✓]</text>
+  <text x="55" y="175" fill="#ffffff" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'> Jane Smith</text>
+  <text x="20" y="194" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  </text>
+  <text x="34" y="194" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>[ ]</text>
+  <text x="55" y="194" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'> Birthdays</text>
+  <text x="20" y="213" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  </text>
+  <text x="34" y="213" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>[ ]</text>
+  <text x="55" y="213" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'> Holidays in Sweden</text>
+  <text x="20" y="251" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>─── work-ms (Microsoft) ──────────────────────────────────────────────</text>
+  <text x="20" y="270" fill="#3fb950" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Authenticated</text>
+  <text x="20" y="289" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Select calendars to include in planning:</text>
+  <text x="20" y="327" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  </text>
+  <text x="34" y="327" fill="#3fb950" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>[✓]</text>
+  <text x="55" y="327" fill="#ffffff" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'> Calendar</text>
+  <text x="20" y="346" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  </text>
+  <text x="34" y="346" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>[ ]</text>
+  <text x="55" y="346" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'> United States holidays</text>
+  <text x="20" y="384" fill="#3fb950" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Setup complete. Run 'plan' to start planning your week.</text>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="503" viewBox="0 0 760 503">
+  <rect width="760" height="503" rx="8" fill="#0d1117"/>
+  <circle cx="18" cy="15" r="5" fill="#ff5f57"/>
+  <circle cx="34" cy="15" r="5" fill="#febc2e"/>
+  <circle cx="50" cy="15" r="5" fill="#28c840"/>
+  <text x="380" y="19" text-anchor="middle" fill="#8b949e" font-size="11" font-family='Cascadia Code, Consolas, Menlo, monospace'>CalendarSync — validate</text>
+  <line x1="0" y1="30" x2="760" y2="30" stroke="#30363d" stroke-width="1"/>
+  <text x="20" y="61" fill="#3fb950" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>$ </text>
+  <text x="34" y="61" fill="#ffffff" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>calendarsync validate</text>
+  <text x="20" y="99" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Validating </text>
+  <text x="97" y="99" fill="#ffffff" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>Monday, Mar 10</text>
+  <text x="195" y="99" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'> – </text>
+  <text x="216" y="99" fill="#ffffff" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>Sunday, Mar 16</text>
+  <text x="20" y="137" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>─── personal (GooglePersonal) ────────────────────────────────────────</text>
+  <text x="20" y="156" fill="#3fb950" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Authenticated</text>
+  <text x="20" y="194" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  Calendar: </text>
+  <text x="104" y="194" fill="#ffffff" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>Jane Smith</text>
+  <text x="174" y="194" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  (id: jane.smith@gmail.com)</text>
+  <text x="20" y="232" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  </text>
+  <text x="34" y="232" fill="#3fb950" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>3 event(s) found:</text>
+  <text x="20" y="251" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  Mon 10  </text>
+  <text x="90" y="251" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>09:00–10:00  </text>
+  <text x="181" y="251" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Team Standup</text>
+  <text x="265" y="251" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  (no body)</text>
+  <text x="20" y="270" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  Wed 12  </text>
+  <text x="90" y="270" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>14:00–15:30  </text>
+  <text x="181" y="270" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Design Review</text>
+  <text x="272" y="270" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  (no body)</text>
+  <text x="20" y="289" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  Fri 14  </text>
+  <text x="90" y="289" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>all-day      </text>
+  <text x="181" y="289" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Midsommar</text>
+  <text x="244" y="289" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  (no body)</text>
+  <text x="20" y="327" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>─── work-ms (Microsoft) ──────────────────────────────────────────────</text>
+  <text x="20" y="346" fill="#3fb950" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Authenticated</text>
+  <text x="20" y="384" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  Calendar: </text>
+  <text x="104" y="384" fill="#ffffff" font-size="13" font-weight="bold" font-family='Cascadia Code, Consolas, Menlo, monospace'>Calendar</text>
+  <text x="160" y="384" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  (id: AAMkAGQxMDc3...)</text>
+  <text x="20" y="422" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  </text>
+  <text x="34" y="422" fill="#3fb950" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>2 event(s) found:</text>
+  <text x="20" y="441" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  Tue 11  </text>
+  <text x="90" y="441" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>10:00–11:00  </text>
+  <text x="181" y="441" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>Sprint Planning</text>
+  <text x="286" y="441" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  (no body)</text>
+  <text x="20" y="460" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  Thu 13  </text>
+  <text x="90" y="460" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>13:00–14:00  </text>
+  <text x="181" y="460" fill="#e6edf3" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>1:1 with Manager</text>
+  <text x="293" y="460" fill="#8b949e" font-size="13" font-weight="normal" font-family='Cascadia Code, Consolas, Menlo, monospace'>  (no body)</text>
+</svg>

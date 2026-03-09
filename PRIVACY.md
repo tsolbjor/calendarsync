@@ -38,7 +38,7 @@ Both paths are created with owner-only permissions (`chmod 700` / `600` on Unix)
 
 CalendarSync connects to the following services on your behalf:
 
-- **Microsoft Graph API** — to access Microsoft 365 / Outlook calendars
+- **Microsoft Graph API** — to access Microsoft 365 / Outlook calendars (including personal Outlook.com / Hotmail accounts)
 - **Google Calendar API** — to access Google Workspace or personal Gmail calendars
 
 Your use of these services is governed by their respective privacy policies:
@@ -48,7 +48,7 @@ Your use of these services is governed by their respective privacy policies:
 ## OAuth credentials
 
 ### Microsoft
-OAuth tokens are obtained via the Microsoft identity platform using your own registered Azure application. Tokens are cached locally using the MSAL token cache.
+OAuth tokens are obtained via the Microsoft identity platform. For personal accounts (Outlook.com, Hotmail, Live.com), the app's built-in registration is used and no Azure setup is required. For work / Entra accounts, your own registered Azure application is used. Tokens are cached locally using the MSAL token cache.
 
 ### Google Workspace
 OAuth tokens are obtained using OAuth credentials you supply (client ID and secret from your own Google Cloud project). Tokens are cached locally via `Google.Apis` `FileDataStore`.

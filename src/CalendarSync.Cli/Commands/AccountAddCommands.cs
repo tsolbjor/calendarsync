@@ -20,9 +20,9 @@ public static class AccountAddCommands
 
     private static Command BuildMicrosoftCommand()
     {
-        var idOpt = new Option<string>("--id") { Required = true, Description = "Friendly name (e.g. 'work-ms')" };
-        var tenantIdOpt = new Option<string?>("--tenant-id") { Description = "Entra tenant ID or domain. Omit for multi-tenant (any organisation) app registrations." };
-        var clientIdOpt = new Option<string?>("--client-id") { Description = "App registration client ID. Omit to use the built-in multi-tenant app." };
+        var idOpt = new Option<string>("--id") { Required = true, Description = "Friendly name (e.g. 'personal-ms' or 'work-ms')" };
+        var tenantIdOpt = new Option<string?>("--tenant-id") { Description = "Entra tenant ID or domain. Omit for personal Microsoft accounts or multi-tenant app registrations." };
+        var clientIdOpt = new Option<string?>("--client-id") { Description = "App registration client ID. Omit to use the built-in app (supports personal accounts and multi-tenant)." };
         var displayNameOpt = new Option<string?>("--display-name") { Description = "Optional display name" };
         var deviceCodeOpt = new Option<bool>("--device-code")
         {
@@ -30,7 +30,7 @@ public static class AccountAddCommands
                           "Needs 'Allow public client flows' enabled in the app registration."
         };
 
-        var cmd = new Command("microsoft", "Add a Microsoft Entra / Microsoft 365 account");
+        var cmd = new Command("microsoft", "Add a Microsoft account (personal Outlook.com / Hotmail, or work Entra / Microsoft 365)");
         cmd.Add(idOpt);
         cmd.Add(tenantIdOpt);
         cmd.Add(clientIdOpt);
